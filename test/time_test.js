@@ -1133,7 +1133,7 @@ suite('icaltime', function() {
       weekNumber: 1,
       getDominicalLetter: 'AG'
     });
-    // A date in week number 53
+    // A date in week number 52
     testDateProperties('2005-01-01T00:00:00', {
       isDate: false,
       year: 2005,
@@ -1153,9 +1153,9 @@ suite('icaltime', function() {
       endOfYear: '2005-12-31',
       getDominicalLetter: 'B',
       startDoyWeek: -5,
-      weekNumber: 53
+      weekNumber: 52
     });
-    // A time in week number 28
+    // A time in week number 27
     testDateProperties('2015-07-08T01:02:03', {
       isDate: false,
       year: 2015,
@@ -1175,7 +1175,7 @@ suite('icaltime', function() {
       endOfYear: '2015-12-31',
       startDoyWeek: 186,
       getDominicalLetter: 'D',
-      weekNumber: 28
+      weekNumber: 27
     });
   });
 
@@ -1650,6 +1650,9 @@ suite('icaltime', function() {
     });
 
     suite("weekOneStarts", function() {
+      // TODO: Modify this so that we can also test week counting systems
+      //       that require other days than Jan. 4th to be in week one.
+
       function testWeekOne(year, dates, only) {
         var dom = ICAL.Time.getDominicalLetter(year);
         (only ? test.only : test)(year + " (" + dom + ")", function() {
@@ -1676,32 +1679,32 @@ suite('icaltime', function() {
 
       testWeekOne(1989, { // A and AG
         SUNDAY: '1989-01-01', MONDAY: '1989-01-02', TUESDAY: '1989-01-03',
-        WEDNESDAY: '1989-01-04', THURSDAY: '1989-01-05', FRIDAY: '1988-12-30',
+        WEDNESDAY: '1989-01-04', THURSDAY: '1988-12-29', FRIDAY: '1988-12-30',
         SATURDAY: '1988-12-31'
       });
       testWeekOne(1994, { // B and BA
         SUNDAY: '1994-01-02', MONDAY: '1994-01-03', TUESDAY: '1994-01-04',
-        WEDNESDAY: '1994-01-05', THURSDAY: '1994-01-06', FRIDAY: '1993-12-31',
+        WEDNESDAY: '1993-12-29', THURSDAY: '1993-12-30', FRIDAY: '1993-12-31',
         SATURDAY: '1994-01-01'
       });
       testWeekOne(1993, { // C and CB
-        SUNDAY: '1993-01-03', MONDAY: '1993-01-04', TUESDAY: '1993-01-05',
-        WEDNESDAY: '1993-01-06', THURSDAY: '1993-01-07', FRIDAY: '1993-01-01',
+        SUNDAY: '1993-01-03', MONDAY: '1993-01-04', TUESDAY: '1992-12-29',
+        WEDNESDAY: '1992-12-30', THURSDAY: '1992-12-31', FRIDAY: '1993-01-01',
         SATURDAY: '1993-01-02'
       });
       testWeekOne(1998, { // D and DC
-        SUNDAY: '1997-12-28', MONDAY: '1997-12-29', TUESDAY: '1997-12-30',
-        WEDNESDAY: '1997-12-31', THURSDAY: '1998-01-01', FRIDAY: '1997-12-26',
-        SATURDAY: '1997-12-27'
+        SUNDAY: '1998-01-04', MONDAY: '1997-12-29', TUESDAY: '1997-12-30',
+        WEDNESDAY: '1997-12-31', THURSDAY: '1998-01-01', FRIDAY: '1998-01-02',
+        SATURDAY: '1998-01-03'
       });
       testWeekOne(1997, { // E and ED
         SUNDAY: '1996-12-29', MONDAY: '1996-12-30', TUESDAY: '1996-12-31',
-        WEDNESDAY: '1997-01-01', THURSDAY: '1997-01-02', FRIDAY: '1996-12-27',
-        SATURDAY: '1996-12-28'
+        WEDNESDAY: '1997-01-01', THURSDAY: '1997-01-02', FRIDAY: '1997-01-03',
+        SATURDAY: '1997-01-04'
       });
       testWeekOne(1991, { // F and FE
         SUNDAY: '1990-12-30', MONDAY: '1990-12-31', TUESDAY: '1991-01-01',
-        WEDNESDAY: '1991-01-02', THURSDAY: '1991-01-03', FRIDAY: '1990-12-28',
+        WEDNESDAY: '1991-01-02', THURSDAY: '1991-01-03', FRIDAY: '1991-01-04',
         SATURDAY: '1990-12-29'
       });
       testWeekOne(1990, { // G and GF

@@ -5023,30 +5023,15 @@ ICAL.TimezoneService = (function() {
       if (wnCacheKey in ICAL.Time._wnCache) {
         return ICAL.Time._wnCache[wnCacheKey];
       }
-      // This function courtesty of Julian Bucknall, published under the MIT license
-      // http://www.boyet.com/articles/publishedarticles/calculatingtheisoweeknumb.html
-      // plus some fixes to be able to use different week starts.
-      var week1;
 
-      var dt = this.clone();
-      dt.isDate = true;
-      var isoyear = this.year;
-
-      if (dt.month == 12 && dt.day > 25) {
-        week1 = ICAL.Time.weekOneStarts(isoyear + 1, aWeekStart, dayInWkOne);
-        if (dt.compare(week1) < 0) {
-          week1 = ICAL.Time.weekOneStarts(isoyear, aWeekStart, dayInWkOne);
-        } else {
-          isoyear++;
-        }
-      } else {
-        week1 = ICAL.Time.weekOneStarts(isoyear, aWeekStart, dayInWkOne);
-        if (dt.compare(week1) < 0) {
-          week1 = ICAL.Time.weekOneStarts(--isoyear, aWeekStart, dayInWkOne);
-        }
+      var week = this.startOfWeek(aWeekStart);
+      var year = week.year;
+      if (week.month === 12 && week.day - 25 >= dayInWkOne) {
+        year += 1;
       }
+      var week1 = ICAL.Time.weekOneStarts(year, aWeekStart, dayInWkOne);
 
-      var daysBetween = (dt.subtractDate(week1).toSeconds() / 86400);
+      var daysBetween = (week.subtractDate(week1).toSeconds() / 86400);
       var answer = ICAL.helpers.trunc(daysBetween / 7) + 1;
       ICAL.Time._wnCache[wnCacheKey] = answer;
       return answer;
@@ -5698,24 +5683,14 @@ ICAL.TimezoneService = (function() {
    * @return {ICAL.Time}                    The date on which week number 1 starts
    */
   ICAL.Time.weekOneStarts = function weekOneStarts(aYear, aWeekStart, aDayOfYearInWeekOne) {
-    var t = ICAL.Time.fromData({
+    return ICAL.Time.fromData({
       year: aYear,
       month: 1,
       // By default we assume, week one shall contain more days of the new year than
       // of the old year, which is equivalent to Jan 4th needs to be in week one.
       day: aDayOfYearInWeekOne || 4,
       isDate: true
-    });
-
-    var dow = t.dayOfWeek();
-    var wkst = aWeekStart || ICAL.Time.DEFAULT_WEEK_START;
-    if (wkst > dow) {
-      t.day -= 7;
-    }
-
-    t.day -= dow - wkst;
-
-    return t;
+    }).startOfWeek(aWeekStart || ICAL.Time.DEFAULT_WEEK_START);
   };
 
   /**
