@@ -5014,22 +5014,31 @@ ICAL.TimezoneService = (function() {
      *
      * @see ICAL.Time.weekOneStarts
      * @param {ICAL.Time.weekDay} aWeekStart   The weekday the week starts with
-     * @param {Number=} aDayOfYearInWeekOne    Define this day of the year to be in week one (ISO 8601: day 4)
-     * @return {Number}                        The ISO week number
+     * @param {Number=} aJanNthInWeekOne       Requires this day of the year to be in week one (ISO 8601: day 4,
+     *                                         used as default).
+     *                                         If this is set to 0, the first day of any year will be be in week
+     *                                         one, the last day will be in the last week of the year. This most
+     *                                         of the time results in "incomplete" first and last weeks.
+     * @return {Number}                        The week number
      */
-    weekNumber: function weekNumber(aWeekStart, aDayOfYearInWeekOne) {
-      var dayInWkOne = aDayOfYearInWeekOne || 4;
+    weekNumber: function weekNumber(aWeekStart, aJanNthInWeekOne) {
+      var dayInWkOne = typeof(aJanNthInWeekOne) === "number" ? aJanNthInWeekOne : 4;
       var wnCacheKey = (this.year << 15) + (this.month << 11) + (this.day << 6) + (aWeekStart << 3) + dayInWkOne;
       if (wnCacheKey in ICAL.Time._wnCache) {
         return ICAL.Time._wnCache[wnCacheKey];
       }
 
-      var week = this.startOfWeek(aWeekStart);
-      var year = week.year;
-      if (week.month === 12 && week.day - 25 >= dayInWkOne) {
-        year += 1;
+      var week = this.startOfWeek(aWeekStart); // TODO: We could check for a cached result for week
+      var year;
+      if (dayInWkOne === 0) {
+        year = this.year;
+      } else {
+        year = week.year;
+        if (week.month === 12 && week.day - 25 >= dayInWkOne) {
+          year += 1;
+        }
       }
-      var week1 = ICAL.Time.weekOneStarts(year, aWeekStart, dayInWkOne);
+      var week1 = ICAL.Time.weekOneStarts(year, aWeekStart, dayInWkOne === 0 ? 1 : dayInWkOne);
 
       var daysBetween = (week.subtractDate(week1).toSeconds() / 86400);
       var answer = ICAL.helpers.trunc(daysBetween / 7) + 1;

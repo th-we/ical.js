@@ -1093,6 +1093,7 @@ suite('icaltime', function() {
         assert.equal(data.endOfYear, dt.endOfYear().toString());
         assert.equal(data.startDoyWeek, dt.startDoyWeek(Time.SUNDAY));
         assert.equal(data.weekNumber, dt.weekNumber(Time.SUNDAY));
+        assert.equal(data.weekNumberIncompleteWeeks, dt.weekNumber(Time.SUNDAY, 0));
         assert.equal(data.getDominicalLetter, dt.getDominicalLetter());
         // TODO nthWeekDay
 
@@ -1131,6 +1132,7 @@ suite('icaltime', function() {
       endOfYear: '2012-12-31',
       startDoyWeek: 1,
       weekNumber: 1,
+      weekNumberIncompleteWeeks: 1,
       getDominicalLetter: 'AG'
     });
     // A date in week number 52
@@ -1153,7 +1155,8 @@ suite('icaltime', function() {
       endOfYear: '2005-12-31',
       getDominicalLetter: 'B',
       startDoyWeek: -5,
-      weekNumber: 52
+      weekNumber: 52,
+      weekNumberIncompleteWeeks: 1
     });
     // A time in week number 27
     testDateProperties('2015-07-08T01:02:03', {
@@ -1175,7 +1178,31 @@ suite('icaltime', function() {
       endOfYear: '2015-12-31',
       startDoyWeek: 186,
       getDominicalLetter: 'D',
-      weekNumber: 27
+      weekNumber: 27,
+      weekNumberIncompleteWeeks: 28
+    });
+    
+    testDateProperties('2015-12-31T00:00:00', {
+      isDate: false,
+      year: 2015,
+      month: 12,
+      day: 31,
+      hour: 0,
+      minute: 0,
+      second: 0,
+      leap_year: false,
+      dayOfWeek: Time.THURSDAY,
+      dayOfYear: 365,
+      startOfWeek: '2015-12-27',
+      endOfWeek: '2016-01-02',
+      startOfMonth: '2015-12-01',
+      endOfMonth: '2015-12-31',
+      startOfYear: '2015-01-01',
+      endOfYear: '2015-12-31',
+      startDoyWeek: 361,
+      getDominicalLetter: 'D',
+      weekNumber: 52,
+      weekNumberIncompleteWeeks: 53
     });
   });
 
